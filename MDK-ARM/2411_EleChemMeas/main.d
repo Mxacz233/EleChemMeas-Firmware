@@ -33,8 +33,15 @@
 2411_elechemmeas\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
 2411_elechemmeas\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 2411_elechemmeas\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+2411_elechemmeas\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
+2411_elechemmeas\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 2411_elechemmeas\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 2411_elechemmeas\main.o: ../Core/Inc/adc.h
 2411_elechemmeas\main.o: ../Core/Inc/dac.h
+2411_elechemmeas\main.o: ../Core/Inc/tim.h
 2411_elechemmeas\main.o: ../Core/Inc/usart.h
 2411_elechemmeas\main.o: ../Core/Inc/gpio.h
+2411_elechemmeas\main.o: C:\Program Files (extra)\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+2411_elechemmeas\main.o: C:\Program Files (extra)\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+2411_elechemmeas\main.o: C:\Program Files (extra)\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+2411_elechemmeas\main.o: C:\Program Files (extra)\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

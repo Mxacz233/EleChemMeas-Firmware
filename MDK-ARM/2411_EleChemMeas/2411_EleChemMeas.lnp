@@ -4,6 +4,7 @@
 "2411_elechemmeas\gpio.o"
 "2411_elechemmeas\adc.o"
 "2411_elechemmeas\dac.o"
+"2411_elechemmeas\tim.o"
 "2411_elechemmeas\usart.o"
 "2411_elechemmeas\stm32f4xx_it.o"
 "2411_elechemmeas\stm32f4xx_hal_msp.o"
@@ -29,7 +30,7 @@
 "2411_elechemmeas\stm32f4xx_hal_tim_ex.o"
 "2411_elechemmeas\stm32f4xx_hal_uart.o"
 "2411_elechemmeas\system_stm32f4xx.o"
---strict --scatter "2411_EleChemMeas\2411_EleChemMeas.sct"
+--library_type=microlib --strict --scatter "2411_EleChemMeas\2411_EleChemMeas.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "2411_EleChemMeas.map" -o 2411_EleChemMeas\2411_EleChemMeas.axf
