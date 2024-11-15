@@ -104,7 +104,7 @@ int main(void)
 	// | 引脚名称       | 功能              | 引脚编号       |
 	// +----------------+-------------------+----------------+
 	// | 参比电极       | ReferEle ADC1_IN0 | PA0            |
-	// | 工作电极       | WorkEle  DAC1_OUT1| PA1             |
+	// | 工作电极       | WorkEle  DAC1_OUT1| PA4             |
 	// | 对电极         | ConEle DAC1_OUT2  | PA5            |
 	// | 用户按键       | B1 GPIO_EXTI13    | PC13           |
 	// +----------------+-------------------+----------------+
@@ -129,6 +129,8 @@ int main(void)
 	// 启动定时器10 11
 	HAL_TIM_Base_Start_IT(&htim10);
 	HAL_TIM_Base_Start_IT(&htim11);
+	// 关闭定时器13
+	HAL_TIM_Base_Stop_IT(&htim13);
 	
 	/* USER CODE END 2 */
 
@@ -208,13 +210,15 @@ typedef enum {
 } ButtonState;
 
 volatile ButtonState buttonState = BUTTON_IDLE;
-volatile uint32_t buttonPressCount = 5;
+volatile uint32_t buttonPressCount = 0;
 volatile uint32_t debounceCounter = 0;
 volatile uint8_t counterStateNum = 6;
 volatile uint8_t testflag=0;
 
 // 电压步进
 volatile uint32_t voltageStep = 0;
+// 目标电压
+volatile uint32_t voltageTarget = 0;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
@@ -232,6 +236,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, 2048);
 				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 807);
 				printf("WorkMode 0: Constant Voltage -1V\r\n");
+				// 关闭定时器13并将电压步进和目标电压清零
+				HAL_TIM_Base_Stop_IT(&htim13);
+				voltageStep = 0;
+				voltageTarget = 0;
 				break;
 			case 1: //恒压0V，即对电极恒定1.65V，工作电极恒定1.65V
 				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, 2048);
@@ -252,25 +260,26 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				// 如果定时器13未启动，则启动定时器13
 				if (voltageStep == 0) {
 					HAL_TIM_Base_Start_IT(&htim13);
+					// 起始电压设为650mV
+					voltageTarget = 650;
 				}
 
-				// 起始电压mV
-				uint16_t startVoltageCV = 650;
 				// 如果电压步进是10的倍数，进行电压步进
 				if (voltageStep % 10 == 0) {
-					if (voltageStep <= 200) {
-						startVoltageCV += 10;
+					if (voltageStep <= 2000) {
+						voltageTarget = 650 + voltageStep;
 					} else {
-						startVoltageCV -= 10;
+						voltageTarget = 2000 + 2650 - voltageStep;
 					}
 				}
 				// 刷写电压
-				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dacConvert(startVoltageCV / 1000.0f));
+				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dacConvert(voltageTarget / 1000.0f));
 
-				// -1V~1V~1V 10mV步进，应步进400次，满次数后停止
-				if (voltageStep >= 400) {
+				// -1V~1V~1V 4000mV 10mV步进，应步进400次，计数值应满4000次，满次数后停止
+				if (voltageStep >= 4000 ){
 					HAL_TIM_Base_Stop_IT(&htim13);
 					voltageStep = 0;
+					voltageTarget = 650;
 				}
 				printf("WorkMode 4: CV\r\n");
 				break;
@@ -278,26 +287,36 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				// 如果定时器13未启动，则启动定时器13
 				if (voltageStep == 0) {
 					HAL_TIM_Base_Start_IT(&htim13);
+					// 起始电压设为650mV
+					voltageTarget = 650;
 				}
 
-				// 起始电压mV
-				uint16_t startVoltageDPV = 650;
 				// 如果电压步进是10的倍数，进行电压步进
 				if (voltageStep % 10 == 0) {
-					if (voltageStep <= 200) {
-						startVoltageDPV += 10;
+					if (voltageStep <= 2000) {
+						voltageTarget = 650 + voltageStep + 15;
 					} else {
-						startVoltageDPV -= 10;
+						voltageTarget = 2000 + 2650 - voltageStep + 15;
 					}
-					// 过充上升沿
-					startVoltageDPV += 15;
+					
 				}
 				if (voltageStep % 10 == 1) {
 					// 过充下降沿
-					startVoltageDPV -= 15;
+					if (voltageStep <= 2000) {
+						voltageTarget = 650 + voltageStep -1;
+					} else {
+						voltageTarget = 2000 + 2650 - voltageStep +1;
+					}
 				}
 				// 刷写电压
-				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dacConvert(startVoltageDPV / 1000.0f));
+				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dacConvert(voltageTarget / 1000.0f));
+
+				// -1V~1V~1V 4000mV 10mV步进，应步进400次，计数值应满4000次，满次数后停止
+				if (voltageStep >= 4000) {
+					HAL_TIM_Base_Stop_IT(&htim13);
+					voltageStep = 0;
+					voltageTarget = 650;
+				}
 
 				printf("WorkMode 5: DPV \r\n");
 				break;
@@ -336,7 +355,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 	}
 
-	// TIM13电压步进
+	// TIM13电压步进 频率20Hz 周期50ms
 	if (htim->Instance == TIM13) {
 		voltageStep++;
 	}
