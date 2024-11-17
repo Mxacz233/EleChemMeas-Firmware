@@ -59,8 +59,10 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
-#define ReferEle_Pin GPIO_PIN_0
-#define ReferEle_GPIO_Port GPIOA
+#define ADC_ReferEle_Pin GPIO_PIN_0
+#define ADC_ReferEle_GPIO_Port GPIOA
+#define ADC_WorkEle_Pin GPIO_PIN_1
+#define ADC_WorkEle_GPIO_Port GPIOA
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3

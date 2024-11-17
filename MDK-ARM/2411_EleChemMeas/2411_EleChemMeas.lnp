@@ -4,6 +4,7 @@
 "2411_elechemmeas\gpio.o"
 "2411_elechemmeas\adc.o"
 "2411_elechemmeas\dac.o"
+"2411_elechemmeas\dma.o"
 "2411_elechemmeas\tim.o"
 "2411_elechemmeas\usart.o"
 "2411_elechemmeas\stm32f4xx_it.o"

@@ -38,6 +38,7 @@
 2411_elechemmeas\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 2411_elechemmeas\main.o: ../Core/Inc/adc.h
 2411_elechemmeas\main.o: ../Core/Inc/dac.h
+2411_elechemmeas\main.o: ../Core/Inc/dma.h
 2411_elechemmeas\main.o: ../Core/Inc/tim.h
 2411_elechemmeas\main.o: ../Core/Inc/usart.h
 2411_elechemmeas\main.o: ../Core/Inc/gpio.h
